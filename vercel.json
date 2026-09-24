@@ -13,7 +13,7 @@
     { "source": "/api/admin/:path*", "destination": "/api/admin" },
     { "source": "/admin", "destination": "/admin/dashboard.html" },
     { "source": "/admin/", "destination": "/admin/dashboard.html" },
-    { "source": "/admin/:path", "destination": "/admin/:path.html" }
+    { "source": "/admin/:path*", "destination": "/admin/:path*.html" }
   ],
   "headers": [
     {
