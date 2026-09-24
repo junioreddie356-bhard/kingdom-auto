@@ -10,3 +10,5 @@ supabase/.temp/
 supabase-2.116.0.tgz
 __pycache__/
 *.pyc
+
+.vercel
