@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vehicle Management — Kingdom</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="admin-topbar">
+    <div class="container admin-nav">
+      <a href="dashboard.html" class="brand" aria-label="Admin dashboard">
+        <span class="brand-mark">KA</span>
+        <span><b>Kingdom</b><small>AUTOMOBILE</small></span>
+      </a>
+      <nav class="admin-nav-links">
+        <a href="dashboard.html">Overview</a>
+        <a href="vehicles.html">Vehicles</a>
+        <a href="media.html">Media</a>
+        <a href="inquiries.html">Inquiries</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <div class="top-actions">
+        <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="small">Light</span>
+        </button>
+        <a href="login.html" id="logout" class="btn btn-ghost">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="side-brand">
+          <div class="brand-mark">KA</div>
+          <div>
+            <strong>Kingdom</strong>
+            <small>Admin</small>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a href="dashboard.html">Overview</a>
+          <a class="active" href="vehicles.html">Vehicles</a>
+          <a href="media.html">Media</a>
+          <a href="inquiries.html">Inquiries</a>
+          <a href="settings.html">Settings</a>
+        </nav>
+
+        <div class="side-card">
+          <span class="label">Stock</span>
+          <strong id="stat-vehicles">0 live</strong>
+        </div>
+      </aside>
+
+      <div class="admin-content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow dark">VEHICLE MANAGEMENT</p>
+            <h1>Inventory Control</h1>
+          </div>
+          <div class="user-pill">Live stock</div>
+        </section>
+
+        <div class="admin-grid">
+          <div class="stack">
+            <section class="panel">
+              <div class="panel-head">
+                <h3>Add Vehicle</h3>
+                <span class="panel-tag">Upload + Generate</span>
+              </div>
+              <p class="small">Checklist: photos, brand, year/model, engine, mileage, transmission, pricing, shipping, fees, duty, clearance, landed cost, and current location.</p>
+              <form id="create-vehicle" class="admin-form" enctype="multipart/form-data">
+                <div class="field">
+                  <label for="current_password">Admin password</label>
+                  <input id="current_password" name="current_password" placeholder="Your current admin password" type="password" required />
+                </div>
+                <div class="field">
+                  <label for="vehicle-id">Vehicle ID</label>
+                  <input id="vehicle-id" name="id" placeholder="Vehicle ID (slug)" required />
+                </div>
+                <div class="field">
+                  <label for="create-files">1. Add photos from camera, gallery, or files</label>
+                  <input name="files" type="file" id="create-files" multiple accept="image/*" capture="environment" />
+                  <div class="file-source-row">
+                    <button type="button" class="file-source-btn" data-file-input="create-files" data-capture="environment">Camera</button>
+                    <button type="button" class="file-source-btn" data-file-input="create-files" data-capture="user">Gallery</button>
+                    <button type="button" class="file-source-btn" data-file-input="create-files" data-capture="">Files</button>
+                  </div>
+                  <div id="create-file-preview" class="file-preview-grid" aria-live="polite"></div>
+                </div>
+                <div class="field">
+                  <label for="brand">2. Car brand / name</label>
+                  <input id="brand" name="brand" placeholder="Car brand / name" required />
+                </div>
+                <div class="field">
+                  <label for="year_model">3. Year / model</label>
+                  <input id="year_model" name="year_model" placeholder="Year / model" />
+                </div>
+                <div class="field">
+                  <label for="engine_capacity">4. Engine capacity</label>
+                  <input id="engine_capacity" name="engine_capacity" placeholder="Engine capacity" />
+                </div>
+                <div class="field">
+                  <label for="mileage">5. Mileage</label>
+                  <input id="mileage" name="mileage" placeholder="Mileage" />
+                </div>
+                <div class="field">
+                  <label for="transmission">6. Transmission</label>
+                  <input id="transmission" name="transmission" placeholder="Transmission" />
+                </div>
+                <div class="field">
+                  <label for="price">7. Car price range or breakdown</label>
+                  <input id="price" name="price" placeholder="Vehicle price / headline price (GH₵)" />
+                </div>
+                <div class="field">
+                  <label for="price_range">7b. Car price range or breakdown detail</label>
+                  <textarea id="price_range" name="price_range" placeholder="Car price range or complete price breakdown"></textarea>
+                </div>
+                <div class="field">
+                  <label for="shipping_cost">8. Shipping cost</label>
+                  <input id="shipping_cost" name="shipping_cost" placeholder="Shipping cost" />
+                </div>
+                <div class="field">
+                  <label for="service_fees">9. Service fees</label>
+                  <input id="service_fees" name="service_fees" placeholder="Service fees" />
+                </div>
+                <div class="field">
+                  <label for="duty">10. Duty</label>
+                  <input id="duty" name="duty" placeholder="Duty" />
+                </div>
+                <div class="field">
+                  <label for="port_charges">11. Port charges and clearance</label>
+                  <input id="port_charges" name="port_charges" placeholder="Port charges and clearance" />
+                </div>
+                <div class="field">
+                  <label for="total_landed_cost">12. Total landed cost / CIF</label>
+                  <input id="total_landed_cost" name="total_landed_cost" placeholder="Total landed cost / CIF" />
+                </div>
+                <div class="field">
+                  <label for="current_location">13. Current location of the car / country of origin</label>
+                  <input id="current_location" name="current_location" placeholder="Current location / country of origin" />
+                </div>
+                <div class="field">
+                  <label for="vin">VIN (optional)</label>
+                  <input id="vin" name="vin" placeholder="VIN" />
+                </div>
+                <div class="field">
+                  <label for="status">Inventory status</label>
+                  <select id="status" name="status">
+                    <option value="Available">Available</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Sold">Sold</option>
+                  </select>
+                </div>
+                <div class="field inline-row">
+                  <label class="checkbox-wrap"><input id="featured" name="featured" type="checkbox" value="true" /> Feature this vehicle on the storefront</label>
+                </div>
+                <div class="field">
+                  <label for="history">Vehicle history (optional)</label>
+                  <textarea id="history" name="history" placeholder="Vehicle history"></textarea>
+                </div>
+                <div class="submit-row"><button class="btn btn-primary" type="submit">Add Vehicle</button></div>
+              </form>
+              <div id="create-res" class="response-box"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>Upload Images</h3>
+                <span class="panel-tag">Gallery</span>
+              </div>
+              <form id="upload-images" class="admin-form">
+                <div class="field">
+                  <label for="photo-current-password">Admin password</label>
+                  <input id="photo-current-password" name="current_password" type="password" placeholder="Current admin password" required />
+                </div>
+                <div class="field">
+                  <label for="photo-vehicle-id">Vehicle ID</label>
+                  <input id="photo-vehicle-id" name="id" placeholder="Vehicle ID (slug)" required />
+                </div>
+                <div class="field">
+                  <label for="photo-upload-mode">Gallery update</label>
+                  <select id="photo-upload-mode" name="mode">
+                    <option value="replace">Replace all existing photos</option>
+                    <option value="append">Add to existing photos</option>
+                  </select>
+                  <small class="photo-upload-help">Replacing changes the vehicle gallery only; listing details stay untouched.</small>
+                </div>
+                <div>
+                  <input name="files" id="files" type="file" multiple accept="image/*" capture="environment" />
+                  <div class="file-source-row">
+                    <button type="button" class="file-source-btn" data-file-input="files" data-capture="environment">Camera</button>
+                    <button type="button" class="file-source-btn" data-file-input="files" data-capture="user">Gallery</button>
+                    <button type="button" class="file-source-btn" data-file-input="files" data-capture="">Files</button>
+                  </div>
+                  <div id="upload-file-preview" class="file-preview-grid" aria-live="polite"></div>
+                </div>
+                <div class="submit-row"><button class="btn btn-primary" type="submit">Replace Photos</button></div>
+              </form>
+              <div id="upload-res" class="response-box"></div>
+            </section>
+          </div>
+
+          <aside class="stack">
+            <section class="panel">
+              <div class="panel-head">
+                <h3>Quick actions</h3>
+                <span class="panel-tag">Tools</span>
+              </div>
+              <p class="small">Use the media page to review uploaded cars and remove any vehicle or media folder when needed.</p>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || {
+      url: 'https://spckgpxzcxvogjamfsqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+    };
+  </script>
+  <script src="../env-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

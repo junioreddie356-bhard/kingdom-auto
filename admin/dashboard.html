@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard — Kingdom</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="admin-topbar">
+    <div class="container admin-nav">
+      <a href="dashboard.html" class="brand" aria-label="Admin dashboard">
+        <span class="brand-mark">KA</span>
+        <span><b>Kingdom</b><small>AUTOMOBILE</small></span>
+      </a>
+      <nav class="admin-nav-links" aria-label="Main admin navigation">
+        <a href="dashboard.html"><span class="nav-icon">◉</span><span>Overview</span></a>
+        <a href="vehicles.html"><span class="nav-icon">▣</span><span>Vehicles</span></a>
+        <a href="media.html"><span class="nav-icon">◫</span><span>Media</span></a>
+        <a href="inquiries.html"><span class="nav-icon">✦</span><span>Inquiries</span></a>
+        <a href="settings.html"><span class="nav-icon">⚙</span><span>Settings</span></a>
+      </nav>
+      <div class="top-actions">
+        <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="small">Light</span>
+        </button>
+        <a href="login.html" id="logout" class="btn btn-ghost">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="side-brand">
+          <div class="brand-mark">KA</div>
+          <div>
+            <strong>Kingdom</strong>
+            <small>Admin</small>
+          </div>
+        </div>
+
+        <nav class="side-nav" aria-label="Sidebar admin navigation">
+          <a class="active" href="dashboard.html"><span class="nav-icon">◉</span><span>Overview</span></a>
+          <a href="vehicles.html"><span class="nav-icon">▣</span><span>Vehicles</span></a>
+          <a href="media.html"><span class="nav-icon">◫</span><span>Media</span></a>
+          <a href="inquiries.html"><span class="nav-icon">✦</span><span>Inquiries</span></a>
+          <a href="settings.html"><span class="nav-icon">⚙</span><span>Settings</span></a>
+        </nav>
+
+        <div class="side-card">
+          <span class="label">Status</span>
+          <strong>System online</strong>
+        </div>
+      </aside>
+
+      <div class="admin-content">
+        <section class="system-strip" aria-live="polite">
+          <div class="system-strip-left">
+            <span class="status-led" aria-hidden="true"></span>
+            <span class="system-title">Live system status</span>
+          </div>
+
+          <div class="system-strip-center">
+            <div class="hud-stat">
+              <span class="hud-label">Timestamp</span>
+              <strong id="hud-timestamp">--:--:--</strong>
+            </div>
+            <div class="hud-stat caution">
+              <span class="hud-label">Alert</span>
+              <strong id="hud-alert">Operations nominal</strong>
+            </div>
+          </div>
+
+          <div class="system-strip-items">
+            <span class="status-pill"><i class="mini-led live"></i> Inventory sync active</span>
+            <span class="status-pill"><i class="mini-led live"></i> Media ready</span>
+            <span class="status-pill"><i class="mini-led live"></i> Leads monitored</span>
+          </div>
+        </section>
+
+        <section class="welcome-panel">
+          <div>
+            <p class="eyebrow dark">ADMIN PANEL</p>
+            <h1>Operations Dashboard</h1>
+          </div>
+          <div class="user-pill">Kingdom AutoMobile</div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat-card accent">
+            <span class="label">Vehicles</span>
+            <strong id="stat-vehicles">0</strong>
+            <small>Live inventory</small>
+          </article>
+          <article class="stat-card">
+            <span class="label">Inquiries</span>
+            <strong id="stat-inquiries">0</strong>
+            <small>Customer messages</small>
+          </article>
+          <article class="stat-card">
+            <span class="label">Uploads</span>
+            <strong id="stat-media">0</strong>
+            <small id="media-status">Media library</small>
+          </article>
+          <article class="stat-card">
+            <span class="label">Status</span>
+            <strong id="system-status">Online</strong>
+            <small id="system-note">System healthy</small>
+          </article>
+        </section>
+
+        <section class="page-grid">
+          <article class="panel action-panel">
+            <div class="panel-head">
+              <h3>Inventory</h3>
+              <span class="panel-tag">Manage</span>
+            </div>
+            <p class="small">Add new vehicles, review stock, and refresh the generated dealer pages.</p>
+            <a href="vehicles.html" class="action-link">Open vehicle manager</a>
+          </article>
+
+          <article class="panel action-panel">
+            <div class="panel-head">
+              <h3>Inquiries</h3>
+              <span class="panel-tag">Customer</span>
+            </div>
+            <p class="small">Follow customer requests and keep track of active leads.</p>
+            <a href="inquiries.html" class="action-link">Review inquiries</a>
+          </article>
+
+          <article class="panel action-panel">
+            <div class="panel-head">
+              <h3>Settings</h3>
+              <span class="panel-tag">Security</span>
+            </div>
+            <p class="small">Rotate credentials and manage the admin operating setup.</p>
+            <a href="settings.html" class="action-link">Go to settings</a>
+          </article>
+        </section>
+
+        <section class="page-grid" style="margin-top: 1rem;">
+          <article class="panel">
+            <div class="panel-head">
+              <h3>Operational health</h3>
+              <span class="panel-tag success">Healthy</span>
+            </div>
+            <ul class="meta-list" style="padding-left: 1rem; margin: 0.75rem 0 0; line-height: 1.9; color: #46525d;">
+              <li>Inventory sync is active and ready for updates.</li>
+              <li>Customer inquiries are being monitored daily.</li>
+              <li>Dealer pages and media resources remain online.</li>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <h3>Recent activity</h3>
+              <span class="panel-tag">Live</span>
+            </div>
+            <ul id="recent-activity-list" class="meta-list" style="padding-left: 1rem; margin: 0.75rem 0 0; line-height: 1.9; color: #46525d;">
+              <li>Loading live activity…</li>
+            </ul>
+          </article>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || {
+      url: 'https://spckgpxzcxvogjamfsqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+    };
+  </script>
+  <script src="../env-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

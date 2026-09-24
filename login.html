@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Kingdom AutoMobile</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <span class="brand-mark">KA</span>
+        <h1>Kingdom AutoMobile</h1>
+      </div>
+      <form class="auth-form" id="login-form">
+        <input type="text" name="contact" placeholder="Email or Phone number" aria-label="Email or Phone" />
+        <div class="password-field">
+          <input type="password" name="password" placeholder="Password" aria-label="Password" />
+          <button type="button" class="toggle-password" data-target="password">Show</button>
+        </div>
+        <button class="signup" type="submit">Log In</button>
+        <div class="auth-links">
+          <a href="#">Forgot password?</a>
+        </div>
+      </form>
+
+      <div class="separator"><span>OR</span></div>
+
+      <div class="create-account">
+        <a href="signup.html">Create New Account</a>
+      </div>
+    <script>window.__KINGDOM_SUPABASE_CONFIG__ = { url: 'https://spckgpxzcxvogjamfsqr.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw' };</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="auth.js"></script>
+    </div>
+  </main>
+</body>
+</html>

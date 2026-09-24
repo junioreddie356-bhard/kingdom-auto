@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock â€” Kingdom AutoMobile</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="index.html" aria-label="Kingdom AutoMobile home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu">â˜°</button>
+    <nav>
+      <a href="index.html">Home</a><a href="stock.html">Stock</a><a href="how.html">How to Buy</a>
+      <a href="about.html">About Us</a><a href="contact.html">Contact</a>
+      <a class="login" href="login.html">Login</a><a class="signup" href="signup.html">Sign Up</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section container stock-page">
+  <section id="stock" class="stock-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow dark">EXPLORE OUR INVENTORY</p>
+        <h2>Featured vehicles</h2>
+      </div>
+      <a href="contact.html" class="view-all">Request a vehicle →</a>
+    </div>
+
+    <div class="stock-toolbar">
+      <div class="stock-filter">
+        <label for="makeFilter">Make</label>
+        <select id="makeFilter">
+          <option value="all">All makes</option>
+          <option value="Toyota">Toyota</option>
+          <option value="Honda">Honda</option>
+          <option value="Nissan">Nissan</option>
+          <option value="BMW">BMW</option>
+          <option value="Mercedes-Benz">Mercedes-Benz</option>
+          <option value="Hyundai">Hyundai</option>
+        </select>
+      </div>
+      <div class="stock-filter">
+        <label for="priceFilter">Max price</label>
+        <select id="priceFilter">
+          <option value="all">Any price</option>
+          <option value="150000">GH₵150,000</option>
+          <option value="200000">GH₵200,000</option>
+          <option value="300000">GH₵300,000</option>
+          <option value="500000">GH₵500,000</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="inventoryGrid" class="inventory-grid" aria-live="polite">
+      <div class="empty-state stock-empty">
+        <p>Loading live inventory…</p>
+        <small>Current stock will appear here as soon as the dealership feed is available.</small>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="container footer"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></div><p>© 2026 Kingdom AutoMobile Dealership. All rights reserved.</p></div></footer>
+<script>window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || { url: 'https://spckgpxzcxvogjamfsqr.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw' };</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="formatters.js"></script>
+<script>
+(function(){
+  const menuBtn = document.querySelector('.menu-btn');
+  const nav = document.querySelector('nav');
+  if (!menuBtn || !nav) return;
+  menuBtn.addEventListener('click', () => nav.classList.toggle('show'));
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => nav.classList.remove('show')));
+
+  const grid = document.getElementById('inventoryGrid');
+  const makeFilter = document.getElementById('makeFilter');
+  const priceFilter = document.getElementById('priceFilter');
+
+  function isImagePath(value) {
+    if (!value || typeof value !== 'string') return false;
+    const cleaned = value.split('?')[0].split('#')[0].trim();
+    if (!cleaned) return false;
+    return /\.(jpe?g|png|gif|webp|svg|bmp|avif|jfif|heic|heif|tiff?|ico)$/i.test(cleaned);
+  }
+
+  function normalizeStoragePath(value) {
+    return String(value || '')
+      .replace(/^\/+/, '')
+      .replace(/^storage\/v1\/object\/public\//i, '')
+      .replace(/^public\//i, '')
+      .replace(/^images\//i, '')
+      .replace(/^vehicles\//i, 'vehicles/');
+  }
+
+  function resolveImageUrl(value) {
+    if (!value) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+
+    const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+
+    if (/^(https?:)?\/\//i.test(text) || text.startsWith('data:')) {
+      const url = text.split('?')[0].split('#')[0];
+      const match = url.match(/^(https?:\/\/[^/]+)\/storage\/v1\/object\/public\/(.*)$/i);
+      if (match) {
+        const [, host, remainder] = match;
+        const clean = normalizeStoragePath(remainder);
+        return clean ? `${host}/storage/v1/object/public/${clean}` : `${host}/storage/v1/object/public/`;
+      }
+      return url;
+    }
+
+    if (text.startsWith('/')) {
+      const match = text.match(/^\/storage\/v1\/object\/public\/(.*)$/i);
+      if (match) {
+        const clean = normalizeStoragePath(match[1]);
+        return clean ? `${baseUrl}/storage/v1/object/public/${clean}` : `${baseUrl}/storage/v1/object/public/`;
+      }
+      return text;
+    }
+
+    if (text.startsWith('images/') || text.startsWith('../images/') || text.startsWith('./images/')) return text;
+
+    const clean = normalizeStoragePath(text);
+    return clean ? `${baseUrl}/storage/v1/object/public/${clean}` : `${baseUrl}/storage/v1/object/public/`;
+  }
+
+  function normalizeVehicle(item) {
+    const make = item.make || item.brand || 'Vehicle';
+    const model = item.model || item.title || 'Model';
+    const year = item.year || '2025';
+    const priceValue = Number(String(item.price || '0').replace(/[^\d.]/g, '')) || 0;
+    const title = `${year} ${make} ${model}`.trim();
+    const rawImages = Array.isArray(item.images) ? item.images : [];
+    return {
+      ...item,
+      id: item.id || item.slug || `${make}-${model}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      make,
+      model,
+      year,
+      title,
+      priceValue,
+      badge: item.condition || item.badge || 'Available',
+      mileage: item.mileage || 'Available',
+      transmission: item.transmission || 'Automatic',
+      fuel: item.fuel || 'Petrol',
+      price: item.price || 'Contact for pricing',
+      images: rawImages.length ? rawImages.map(resolveImageUrl) : ['']
+    };
+  }
+
+  function applyQueryFilters() {
+    if (!makeFilter || !priceFilter) return;
+    const params = new URLSearchParams(window.location.search);
+    const selectedMake = params.get('make');
+    const selectedMax = params.get('max');
+    if (selectedMake && [...makeFilter.options].some(option => option.value === selectedMake)) {
+      makeFilter.value = selectedMake;
+    }
+    if (selectedMax && [...priceFilter.options].some(option => option.value === selectedMax)) {
+      priceFilter.value = selectedMax;
+    }
+  }
+
+  async function renderCards() {
+    if (!grid) return;
+
+    const api = window.KingdomSupabase;
+    const rawVehicles = api && typeof api.loadVehicles === 'function' ? await api.loadVehicles() : [];
+    const vehicles = (rawVehicles || []).map(normalizeVehicle);
+
+    const selectedMake = makeFilter ? makeFilter.value : 'all';
+    const selectedMax = priceFilter ? Number(priceFilter.value || 0) : 0;
+
+    const filtered = vehicles.filter(item => {
+      const makeOk = selectedMake === 'all' || item.make === selectedMake;
+      const priceOk = !selectedMax || item.priceValue <= selectedMax;
+      return makeOk && priceOk;
+    });
+
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="empty-state stock-empty"><p>No vehicles match your current filters.</p><small>Try a different make or price range.</small></div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => {
+      const imageSrc = Array.isArray(item.images) && item.images.length ? resolveImageUrl(item.images[0]) : '';
+      const detailUrl = `vehicle.html?id=${encodeURIComponent(item.id)}`;
+      return `
+      <article class="vehicle-card">
+        <div class="vehicle-img"><span class="tag">${item.badge}</span><img class="vehicle-photo" src="${imageSrc}" alt="${item.title}" onerror="this.onerror=null;this.src='';" /></div>
+        <div class="vehicle-info"><h3>${item.title}</h3><p>${item.year} • ${item.transmission} • ${item.fuel}</p><div class="price">${formatPrice(item.price)} <a class="view-details" href="${detailUrl}">View Details</a></div><div class="vehicle-meta-inline">Brand: ${item.make} • Model: ${item.model} • Range: ${formatPrice(item.price)} • Location: ${item.location || 'Local'}</div></div>
+      </article>
+      `;
+    }).join('');
+  }
+
+  function onFilterChange() {
+    const params = new URLSearchParams(window.location.search);
+    const makeValue = makeFilter ? makeFilter.value : 'all';
+    const priceValue = priceFilter ? priceFilter.value : 'all';
+    if (makeValue !== 'all') params.set('make', makeValue); else params.delete('make');
+    if (priceValue !== 'all') params.set('max', priceValue); else params.delete('max');
+    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    window.history.replaceState({}, '', nextUrl);
+    renderCards();
+  }
+
+  if (makeFilter) makeFilter.addEventListener('change', onFilterChange);
+  if (priceFilter) priceFilter.addEventListener('change', onFilterChange);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      applyQueryFilters();
+      renderCards();
+    }, { once: true });
+  } else {
+    applyQueryFilters();
+    renderCards();
+  }
+})();
+</script>
+<script src="price-range.js"></script>
+</body>
+</html>
+

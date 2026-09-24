@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Media Manager — Kingdom</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="admin-topbar">
+    <div class="container admin-nav">
+      <a href="dashboard.html" class="brand" aria-label="Admin dashboard">
+        <span class="brand-mark">KA</span>
+        <span><b>Kingdom</b><small>AUTOMOBILE</small></span>
+      </a>
+      <nav class="admin-nav-links">
+        <a href="dashboard.html">Overview</a>
+        <a href="vehicles.html">Vehicles</a>
+        <a href="media.html" class="active">Media</a>
+        <a href="inquiries.html">Inquiries</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <div class="top-actions">
+        <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="small">Light</span>
+        </button>
+        <a href="login.html" id="logout" class="btn btn-ghost">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="side-brand">
+          <div class="brand-mark">KA</div>
+          <div>
+            <strong>Kingdom</strong>
+            <small>Admin</small>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a href="dashboard.html">Overview</a>
+          <a href="vehicles.html">Vehicles</a>
+          <a class="active" href="media.html">Media</a>
+          <a href="inquiries.html">Inquiries</a>
+          <a href="settings.html">Settings</a>
+        </nav>
+
+        <div class="side-card">
+          <span class="label">Media</span>
+          <strong id="stat-media">0 files</strong>
+        </div>
+      </aside>
+
+      <div class="admin-content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow dark">MEDIA CENTER</p>
+            <h1>Uploaded vehicle media</h1>
+          </div>
+          <div class="user-pill">Monitor & remove</div>
+        </section>
+
+        <section class="panel media-panel">
+          <div class="panel-head">
+            <h3>Upload library</h3>
+            <span class="panel-tag">Files</span>
+          </div>
+          <p class="small">Review all uploaded vehicle images and remove any file or vehicle folder whenever needed.</p>
+          <div class="media-toolbar">
+            <span class="meta-pill">Image gallery</span>
+            <span class="meta-pill muted" id="media-status">Scanning uploads…</span>
+          </div>
+          <div class="media-filter-row">
+            <input id="media-search" type="search" placeholder="Search by vehicle name or file" aria-label="Search media" />
+          </div>
+          <ul id="media-list" class="media-gallery"></ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Inventory</h3>
+            <span class="panel-tag">Manage</span>
+          </div>
+          <p class="small">Review each vehicle, regenerate thumbnails, or remove uploaded vehicle listings and media together.</p>
+          <div id="bulk-delete-bar" class="bulk-delete-bar" hidden>
+            <label class="bulk-select-all"><input id="select-all-vehicles" type="checkbox" /> Select all</label>
+            <button id="bulk-remove-vehicles" type="button" class="btn btn-danger">Remove selected from storefront</button>
+          </div>
+          <ul id="vehicle-list" class="list"></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || {
+      url: 'https://spckgpxzcxvogjamfsqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+    };
+  </script>
+  <script src="../env-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

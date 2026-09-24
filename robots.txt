@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kingdom-auto-mobile.vercel.app/sitemap.xml

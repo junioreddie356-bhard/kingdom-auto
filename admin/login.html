@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login — Kingdom AutoMobile</title>
+  <meta name="description" content="Secure admin login for Kingdom AutoMobile inventory, media, uploads, and customer inquiry management." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#111d2d" />
+  <link rel="canonical" href="https://kingdom-auto-mobile-8mz7z5wry-edmund-junior-s-projects.vercel.app/login.html" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-auth-body">
+  <header class="admin-topbar">
+    <div class="container admin-nav">
+      <a href="dashboard.html" class="brand" aria-label="Admin dashboard">
+        <span class="brand-mark">KA</span>
+        <span><b>Kingdom</b><small>AUTOMOBILE</small></span>
+      </a>
+      <nav class="admin-nav-links">
+        <a href="dashboard.html">Home</a>
+        <a href="dashboard.html">Stock</a>
+        <a href="dashboard.html">About</a>
+        <a href="dashboard.html">How It Works</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="login-shell">
+    <div class="login-panel container">
+      <div class="login-hero">
+        <p class="eyebrow dark">ADMIN ACCESS</p>
+        <h1>Manage your inventory, uploads and customer inquiries.</h1>
+        <ul>
+          <li>Live vehicle updates</li>
+          <li>Secure uploads & thumbnails</li>
+          <li>Inquiry tracking and operations</li>
+        </ul>
+      </div>
+
+      <div class="admin-card">
+        <div class="card-header">
+          <h2>Sign In</h2>
+          <span>Portal</span>
+        </div>
+
+        <form id="admin-login" class="admin-form">
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" name="username" required placeholder="Enter your username" />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required placeholder="Enter your password" />
+          </div>
+
+          <div class="field inline-row">
+            <label class="checkbox-wrap"><input type="checkbox" id="show-password" /> Show password</label>
+            <a href="#" class="muted-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Sign In</button>
+          <div id="msg" class="error" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="../env-config.js"></script>
+  <script>
+    async function loadCreds(){
+      try{
+        const r = await fetch('creds.json', {cache: 'no-store'});
+        if (!r.ok) return null;
+        return await r.json();
+      } catch (e) { return null; }
+    }
+
+    function hexToBytes(hex){
+      if(!hex) return new Uint8Array();
+      const clean = String(hex).replace(/[^0-9a-fA-F]/g, '');
+      const bytes = new Uint8Array(clean.length/2);
+      for(let i=0;i<bytes.length;i++) bytes[i] = parseInt(clean.substr(i*2,2),16);
+      return bytes;
+    }
+
+    function bufToHex(buf){
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function derivePBKDF2(password, saltHex, iterations){
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey('raw', enc.encode(String(password)), {name:'PBKDF2'}, false, ['deriveBits']);
+      const salt = hexToBytes(saltHex);
+      const bits = await crypto.subtle.deriveBits({name:'PBKDF2', salt, iterations: iterations || 100000, hash: 'SHA-256'}, key, 256);
+      return bufToHex(bits);
+    }
+
+    const showPwdEl = document.getElementById('show-password');
+    if (showPwdEl){
+      showPwdEl.addEventListener('change', function(){
+        const input = document.getElementById('password');
+        if (!input) return;
+        input.type = this.checked ? 'text' : 'password';
+      });
+    }
+
+    const loginForm = document.getElementById('admin-login');
+    if (loginForm){
+      loginForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const u = (document.getElementById('username') || {}).value || '';
+        const p = (document.getElementById('password') || {}).value || '';
+        const msg = document.getElementById('msg');
+
+        const creds = await loadCreds();
+        if (!creds){ if (msg) msg.textContent = 'Admin creds not found'; return; }
+
+        if (creds.hash && creds.salt){
+          try{
+            const derived = await derivePBKDF2(p, creds.salt, creds.iterations || 100000);
+            if (u === creds.username && derived === creds.hash){
+              sessionStorage.setItem('adminAuth','1');
+              sessionStorage.setItem('adminUser',u);
+              window.location.href='dashboard.html';
+              return;
+            }
+          }catch(e){ console.error(e); }
+        } else if (u === creds.username && p === creds.password){
+          sessionStorage.setItem('adminAuth','1');
+          sessionStorage.setItem('adminUser',u);
+          window.location.href='dashboard.html';
+          return;
+        }
+
+        if (msg) msg.textContent = 'Invalid credentials';
+      });
+    }
+  </script>
+</body>
+</html>

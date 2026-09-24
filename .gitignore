@@ -1,0 +1,12 @@
+.env
+.env.*
+node_modules/
+.DS_Store
+.vercel
+.env*
+supabase-bin/
+supabase_windows_amd64.zip
+supabase/.temp/
+supabase-2.116.0.tgz
+__pycache__/
+*.pyc

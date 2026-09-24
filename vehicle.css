@@ -1,0 +1,25 @@
+/* Vehicle detail page styles */
+.vehicle-hero{padding:40px 0}
+.vehicle-container{display:grid;grid-template-columns:1.35fr .95fr;gap:32px;align-items:start}
+.gallery{background:#fff;border:1px solid #edf1f2;border-radius:18px;padding:14px;box-shadow:0 16px 34px rgba(16,22,29,.05)}
+.main-image{height:520px;background:#fff;display:grid;place-items:center;overflow:hidden;border-radius:12px;border:1px solid #edf2f4}
+.main-image img{width:100%;height:100%;display:block;object-fit:cover;background:#fff}
+.thumbs{display:flex;gap:12px;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+.thumb{width:96px;height:72px;background:#f3f5f7;display:grid;place-items:center;border-radius:10px;cursor:pointer;border:2px solid transparent;overflow:hidden;flex-shrink:0;transition:border-color .2s ease, transform .2s ease}
+.thumb img{width:100%;height:100%;display:block;object-fit:cover}
+.thumb:hover{transform:translateY(-1px)}
+.thumb.active{border-color:#111821;box-shadow:0 8px 18px rgba(17,24,33,.08)}
+.details-card{background:#fff;border:1px solid #e9ecef;border-radius:18px;padding:20px;box-shadow:0 16px 34px rgba(16,22,29,.05)}
+.details-card h2{margin:0 0 8px}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.specs b{display:block}
+.description{margin-top:12px;color:#55656f}
+.inquiry{margin-top:16px}
+.inquiry button{background:#e5372a;color:#fff;border:0;padding:10px 14px;border-radius:6px}
+
+@media(min-width:761px) and (max-width:1100px){.vehicle-container{grid-template-columns:1fr 360px;gap:20px}.main-image{height:300px}.container{width:min(100% - 48px,980px)}}@media(max-width:900px){.vehicle-container{grid-template-columns:1fr;}.main-image{height:260px}}@media(max-width:560px){.vehicle-hero{padding:24px 0}.gallery,.details-card{padding:10px}.main-image{height:210px;font-size:22px}.thumbs{overflow-x:auto;padding-bottom:4px}.thumb{flex:0 0 72px}.specs{font-size:14px}.vehicle-meta dl{grid-template-columns:1fr;gap:2px}.inquiry button{width:100%;padding:12px}}
+
+.vehicle-meta{margin-top:12px;border-top:1px solid #eef2f4;padding-top:12px;color:#34414a}
+.vehicle-meta dl{display:grid;grid-template-columns:120px 1fr;gap:6px 12px}
+.vehicle-meta dt{font-weight:700;color:#26313b}
+.vehicle-history{margin-top:10px;background:#fbfdfe;border:1px solid #eef4f6;padding:12px;border-radius:6px;color:#55656f}

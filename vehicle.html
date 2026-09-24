@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vehicle Details — Kingdom AutoMobile</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="vehicle.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="brand-mark">KA</span><span>Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></a>
+    <button class="menu-btn" aria-label="Open menu">☰</button>
+    <nav>
+      <a href="index.html">Home</a><a href="stock.html">Stock</a><a href="how.html">How to Buy</a>
+      <a href="about.html">About Us</a><a href="contact.html">Contact</a>
+      <a class="login" href="login.html">Login</a><a class="signup" href="signup.html">Sign Up</a>
+    </nav>
+  </div>
+</header>
+
+<main class="vehicle-hero container">
+  <div class="vehicle-container">
+    <div>
+      <div class="gallery">
+        <div id="mainImage" class="main-image">Image</div>
+        <div id="thumbs" class="thumbs"></div>
+      </div>
+      <div id="description" class="description"></div>
+    </div>
+
+    <aside class="details-card">
+      <h2 id="title">Vehicle Title</h2>
+      <div id="price" class="price" style="font-size:20px;font-weight:bold;color:#1c2b33"></div>
+      <div class="specs">
+        <div><b id="year">Year</b><small id="transmission"></small></div>
+        <div><b id="fuel">Fuel</b><small id="mileage"></small></div>
+      </div>
+      <div id="extraDetails"></div>
+      <div class="inquiry"><button id="inquireBtn">Send Inquiry</button></div>
+    </aside>
+  </div>
+</main>
+
+<footer><div class="container footer"><div class="brand"><span class="brand-mark">KA</span><span>Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></div><p>© 2026 Kingdom AutoMobile Dealership. All rights reserved.</p></div></footer>
+
+<script>window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || { url: 'https://spckgpxzcxvogjamfsqr.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw' };</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="formatters.js"></script>
+<script>
+function qs(name){
+  return new URLSearchParams(location.search).get(name);
+}
+
+function normalizeVehicle(item) {
+  const make = item.make || item.brand || 'Vehicle';
+  const model = item.model || item.title || 'Model';
+  const year = item.year || '2025';
+  const price = item.price || 'Contact for pricing';
+  const rawImages = Array.isArray(item.images) ? item.images : [];
+  const images = rawImages.length
+    ? rawImages.map(value => {
+        if (!value) return '';
+        if (typeof value === 'string') return imageSrc(value);
+        if (typeof value === 'object') {
+          const resolved = value.url || value.path || value.src || '';
+          return imageSrc(resolved);
+        }
+        return imageSrc(String(value));
+      })
+    : [''];
+
+  return {
+    ...item,
+    id: item.id || item.slug || `${make}-${model}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    title: `${year} ${make} ${model}`,
+    year,
+    price,
+    mileage: item.mileage || 'Available',
+    transmission: item.transmission || 'Automatic',
+    fuel: item.fuel || 'Petrol',
+    description: item.history || item.condition || 'A well-presented vehicle from our current stock.',
+    images
+  };
+}
+
+function normalizeStoragePath(value) {
+    return String(value || '')
+      .replace(/^\/+/, '')
+      .replace(/^storage\/v1\/object\/public\//i, '')
+      .replace(/^public\//i, '')
+      .replace(/^images\//i, '')
+      .replace(/^vehicles\//i, 'vehicles/');
+  }
+
+  function imageSrc(value) {
+  if (!value) return '';
+  const text = String(value).trim();
+  if (!text) return '';
+
+  const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+
+  if (/^(https?:)?\/\//i.test(text) || text.startsWith('data:')) {
+    const url = text.split('?')[0].split('#')[0];
+      const match = url.match(/^(https?:\/\/[^/]+)\/storage\/v1\/object\/public\/(.*)$/i);
+      if (match) {
+        const [, host, remainder] = match;
+        const clean = normalizeStoragePath(remainder);
+        return clean ? `${host}/storage/v1/object/public/${clean}` : `${host}/storage/v1/object/public/`;
+    }
+    return url;
+  }
+
+  if (text.startsWith('/')) {
+    const match = text.match(/^\/storage\/v1\/object\/public\/(.*)$/i);
+    if (match) {
+        const clean = normalizeStoragePath(match[1]);
+        return clean ? `${baseUrl}/storage/v1/object/public/${clean}` : `${baseUrl}/storage/v1/object/public/`;
+    }
+    return text;
+  }
+
+  if (text.startsWith('images/') || text.startsWith('../images/') || text.startsWith('./images/')) return text;
+
+
+  const clean = normalizeStoragePath(text);
+  return clean ? `${baseUrl}/storage/v1/object/public/${clean}` : `${baseUrl}/storage/v1/object/public/`;
+}
+
+async function renderVehicle(id){
+  const api = window.KingdomSupabase;
+  const vehicles = api && typeof api.loadVehicles === 'function' ? await api.loadVehicles() : [];
+  const requestedId = id || (vehicles[0] && (vehicles[0].id || vehicles[0].slug)) || '';
+  const v = (vehicles || []).map(normalizeVehicle).find(vehicle => String(vehicle.id) === String(requestedId));
+
+  if(!v){
+    document.getElementById('title').textContent = 'No vehicle available';
+    document.getElementById('price').textContent = 'Currently unavailable';
+    document.getElementById('year').textContent = '—';
+    document.getElementById('transmission').textContent = 'Check back soon';
+    document.getElementById('fuel').textContent = '—';
+    document.getElementById('mileage').textContent = 'No stock available';
+    document.getElementById('description').textContent = 'There are currently no vehicles listed in the storefront.';
+    document.getElementById('mainImage').textContent = 'Vehicle unavailable';
+    document.getElementById('thumbs').innerHTML = '';
+    document.getElementById('extraDetails').innerHTML = '<p>Inventory is being refreshed.</p>';
+    return;
+  }
+
+  document.getElementById('title').textContent = v.title;
+  document.getElementById('price').textContent = formatPrice(v.price);
+  document.getElementById('year').textContent = v.year;
+  document.getElementById('transmission').textContent = v.transmission;
+  document.getElementById('fuel').textContent = v.fuel;
+  document.getElementById('mileage').textContent = v.mileage;
+  document.getElementById('description').textContent = v.description;
+
+  const main = document.getElementById('mainImage');
+  const thumbs = document.getElementById('thumbs');
+  thumbs.innerHTML='';
+  v.images.forEach((src, idx)=>{
+    const resolved = imageSrc(src);
+    const img = document.createElement('img');
+    img.src = resolved;
+    img.alt = `${v.title} photo ${idx + 1}`;
+    img.onerror = function(){ this.onerror = null; this.src = ''; };
+
+    const t = document.createElement('div');
+    t.className = 'thumb';
+    t.appendChild(img.cloneNode(false));
+    t.addEventListener('click', ()=>{
+      main.innerHTML = '<img src="' + resolved + '" alt="' + v.title + '" onerror="this.onerror=null;this.src=\'images/placeholder-car.svg\';" />';
+      document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+
+    if (idx === 0) {
+      t.classList.add('active');
+      main.innerHTML = '<img src="' + resolved + '" alt="' + v.title + '" onerror="this.onerror=null;this.src=\'images/placeholder-car.svg\';" />';
+    }
+    thumbs.appendChild(t);
+  });
+
+  const extra = document.getElementById('extraDetails');
+  extra.innerHTML = `<p><b>Mileage:</b> ${v.mileage}</p><p><b>Transmission:</b> ${v.transmission}</p><p><b>Fuel:</b> ${v.fuel}</p>`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const id = qs('id');
+  renderVehicle(id);
+  const menuBtn = document.querySelector('.menu-btn');
+  const nav = document.querySelector('nav');
+  if (menuBtn && nav){ menuBtn.addEventListener('click', ()=>nav.classList.toggle('show')); nav.querySelectorAll('a').forEach(link=>link.addEventListener('click', ()=>nav.classList.remove('show'))); }
+  const inquire = document.getElementById('inquireBtn');
+  if(inquire) inquire.addEventListener('click', ()=> alert('Your inquiry has been sent. Our team will contact you shortly.'));
+});
+</script>
+</body>
+</html>

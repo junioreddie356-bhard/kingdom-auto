@@ -1,0 +1,24 @@
+/* Auth (login/signup) styles */
+.auth-page{min-height:100vh;display:grid;place-items:center;background:#f6f7f8;padding:40px}
+.auth-card{width:100%;max-width:380px;background:#fff;padding:28px;border:1px solid #e6e7e8;border-radius:10px;text-align:center;box-shadow:0 6px 30px #00000010}
+.auth-brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:16px}
+.auth-brand h1{font-size:18px;margin:0;color:#16212b}
+.auth-form{display:flex;flex-direction:column;gap:10px}
+.auth-form input{padding:12px 14px;border:1px solid #d7dbe0;border-radius:6px;font:inherit}
+.auth-form .signup{background:#3897f0;color:#fff;border:0;padding:10px;border-radius:6px;font-weight:bold}
+.auth-links{margin-top:6px;text-align:right}
+.auth-links a{color:#3897f0;text-decoration:none;font-size:13px}
+.separator{display:flex;align-items:center;gap:12px;margin:18px 0;color:#969da6}
+.separator span{background:#fff;padding:4px 12px;border-radius:20px;border:1px solid #e6e7e8}
+.create-account a{color:#3897f0;text-decoration:none;font-weight:bold}
+
+@media(max-width:420px){.auth-card{padding:20px;margin:12px}}
+
+.password-field{position:relative;display:flex;align-items:center}
+.password-field input{flex:1}
+.toggle-password{position:relative;margin-left:8px;border:0;background:none;color:#3897f0;font-weight:700;cursor:pointer;padding:6px}
+.toggle-password:focus{outline:2px solid #cfe7ff;border-radius:6px}
+.pw-hint{font-size:12px;color:#6b7280;text-align:left;margin-top:6px}
+.error{color:#d93025;margin-top:6px;font-size:13px;text-align:left}
+
+.error{color:#d93025;margin-top:6px;font-size:13px;text-align:left}

@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock — Kingdom AutoMobile</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="index.html" aria-label="Kingdom AutoMobile home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu">☰</button>
+    <nav>
+      <a href="index.html">Home</a><a href="stock.html">Stock</a><a href="how.html">How to Buy</a>
+      <a href="about.html">About Us</a><a href="contact.html">Contact</a>
+      <a class="login" href="login.html">Login</a><a class="signup" href="signup.html">Sign Up</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section container">
+  <section id="stock" class="section container">
+    <div class="section-heading"><div><p class="eyebrow dark">EXPLORE OUR INVENTORY</p><h2>Featured Vehicles</h2></div><a href="stock.html" class="view-all">View All Stock →</a></div>
+    <div class="empty-state">
+      <p>No vehicles are currently listed in the admin inventory.</p>
+      <small>Cars will appear here once they are added to the system.</small>
+    </div>
+  </section>
+</main>
+
+<footer><div class="container footer"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></div><p>© 2026 Kingdom AutoMobile Dealership. All rights reserved.</p></div></footer>
+<script>
+(function(){
+  const menuBtn = document.querySelector('.menu-btn');
+  const nav = document.querySelector('nav');
+  if (!menuBtn || !nav) return;
+  menuBtn.addEventListener('click', () => nav.classList.toggle('show'));
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => nav.classList.remove('show')));
+})();
+</script>
+</body>
+</html>
+

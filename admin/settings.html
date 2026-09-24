@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Settings — Kingdom</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="admin-topbar">
+    <div class="container admin-nav">
+      <a href="dashboard.html" class="brand" aria-label="Admin dashboard">
+        <span class="brand-mark">KA</span>
+        <span><b>Kingdom</b><small>AUTOMOBILE</small></span>
+      </a>
+      <nav class="admin-nav-links">
+        <a href="dashboard.html">Overview</a>
+        <a href="vehicles.html">Vehicles</a>
+        <a href="inquiries.html">Inquiries</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <div class="top-actions">
+        <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="small">Light</span>
+        </button>
+        <a href="login.html" id="logout" class="btn btn-ghost">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="side-brand">
+          <div class="brand-mark">KA</div>
+          <div>
+            <strong>Kingdom</strong>
+            <small>Admin</small>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a href="dashboard.html">Overview</a>
+          <a href="vehicles.html">Vehicles</a>
+          <a href="inquiries.html">Inquiries</a>
+          <a class="active" href="settings.html">Settings</a>
+        </nav>
+
+        <div class="side-card">
+          <span class="label">Security</span>
+          <strong>Protected</strong>
+        </div>
+      </aside>
+
+      <div class="admin-content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow dark">ADMIN SETTINGS</p>
+            <h1>Security & Operations</h1>
+          </div>
+          <div class="user-pill">System</div>
+        </section>
+
+        <div class="admin-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Rotate credentials</h3>
+              <span class="panel-tag">Security</span>
+            </div>
+            <form id="rotate-creds" class="admin-form">
+              <div><input name="current" placeholder="Current password" type="password" required /></div>
+              <div><input name="username" placeholder="New username" required /></div>
+              <div><input name="password" placeholder="New password" type="password" required /></div>
+              <div class="submit-row"><button class="btn btn-primary" type="submit">Rotate</button></div>
+            </form>
+            <div id="rotate-result" class="response-box"></div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || {
+      url: 'https://spckgpxzcxvogjamfsqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+    };
+  </script>
+  <script src="../env-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

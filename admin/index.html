@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Portal — Kingdom AutoMobile</title>
+<meta http-equiv="refresh" content="0; url=dashboard.html" />
+<link rel="stylesheet" href="admin.css" />
+<style>
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0d1520, #111d2d 45%, #1b2c42);
+    color: #edf3fe;
+  }
+  body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+  }
+  .admin-redirect {
+    background: rgba(18, 27, 42, 0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 22px 42px rgba(0,0,0,0.3);
+    text-align: center;
+    max-width: 420px;
+  }
+  .brand-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #e4372d;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+  }
+  p {
+    margin: 0;
+    color: #c2cedd;
+    line-height: 1.6;
+  }
+  a {
+    color: #ffd9d5;
+    text-decoration: none;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+  <div class="admin-redirect">
+    <div class="brand-mark">KA</div>
+    <h1>Admin Portal</h1>
+    <p>Redirecting to the admin dashboard…</p>
+    <p><a href="dashboard.html">Open dashboard now</a></p>
+  </div>
+
+  <script>
+    window.location.replace('dashboard.html');
+  </script>
+</body>
+</html>

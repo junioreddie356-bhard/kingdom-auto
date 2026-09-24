@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Kingdom AutoMobile</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="brand-mark">KA</span><span>Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></a>
+    <button class="menu-btn" aria-label="Open menu">☰</button>
+    <nav>
+      <a href="index.html">Home</a><a href="stock.html">Stock</a><a href="how.html">How to Buy</a>
+      <a href="about.html">About Us</a><a href="contact.html">Contact</a>
+      <a class="login" href="login.html">Login</a><a class="signup" href="signup.html">Sign Up</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section container contact">
+  <section class="contact-panel">
+    <div>
+      <p class="eyebrow dark">GET IN TOUCH</p>
+      <h2>Need help finding a vehicle?</h2>
+      <p>Talk to our team about stock availability, pricing, or import support for your next purchase.</p>
+    </div>
+    <div class="contact-details">
+      <div>
+        <strong>Call us</strong>
+        <a href="tel:+233551889899">+233 55 188 9899</a>
+      </div>
+      <div>
+        <strong>Email</strong>
+        <a href="mailto:kingzamazingimport@gmail.com">kingzamazingimport@gmail.com</a>
+      </div>
+      <div>
+        <strong>Visit</strong>
+        <span>Tamale, Northern Region, Ghana</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-form">
+    <div><p class="eyebrow dark">REQUEST A CALLBACK</p><h2>Send your inquiry</h2></div>
+    <form id="inquiryForm">
+      <input name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input name="phone" placeholder="Phone Number" />
+      <textarea name="message" placeholder="Tell us what vehicle you're looking for"></textarea>
+      <button type="submit">Send Inquiry</button>
+      <div id="statusMessage" class="status-message" aria-live="polite"></div>
+    </form>
+  </section>
+</main>
+
+<footer><div class="container footer"><div class="brand"><span class="brand-mark">KA</span><span>Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></div><p>© 2026 Kingdom AutoMobile Dealership. All rights reserved.</p></div></footer>
+<script>
+(function(){
+  const menuBtn = document.querySelector('.menu-btn');
+  const nav = document.querySelector('nav');
+  if (!menuBtn || !nav) return;
+  menuBtn.addEventListener('click', () => nav.classList.toggle('show'));
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => nav.classList.remove('show')));
+
+  const form = document.getElementById('inquiryForm');
+  const status = document.getElementById('statusMessage');
+  if (!form || !status) return;
+
+  form.addEventListener('submit', function(event){
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const existing = JSON.parse(localStorage.getItem('kingdom_inquiries') || '[]');
+    existing.push({ ...data, submittedAt: new Date().toISOString() });
+    localStorage.setItem('kingdom_inquiries', JSON.stringify(existing));
+    form.reset();
+    status.textContent = 'Thank you. Your inquiry has been saved and our team will contact you soon.';
+    status.classList.add('show');
+  });
+})();
+</script>
+</body>
+</html>
