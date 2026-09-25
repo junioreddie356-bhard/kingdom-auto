@@ -185,9 +185,9 @@ def build_public_image_urls(paths):
                 normalized = normalized.split('/storage/v1/object/public/', 1)[1]
             normalized = normalized.strip('/').replace('public/', '', 1) if normalized.strip('/').startswith('public/') else normalized.strip('/')
             if normalized.startswith('images/') or normalized.startswith('vehicles/'):
-                urls.append(base + '/' + normalized)
+                urls.append(base + '/' + quote(normalized, safe='/'))
             else:
-                urls.append(base + '/' + normalized)
+                urls.append(base + '/' + quote(normalized, safe='/'))
             continue
 
         if normalized.startswith('storage/v1/object/'):
@@ -204,10 +204,10 @@ def build_public_image_urls(paths):
             if normalized.startswith(('images/', '../images/', './images/')):
                 urls.append(normalized)
             else:
-                urls.append(base + '/' + normalized)
+                urls.append(base + '/' + quote(normalized, safe='/'))
             continue
 
-        urls.append(base + '/' + normalized)
+        urls.append(base + '/' + quote(normalized, safe='/'))
     return urls
 
 
