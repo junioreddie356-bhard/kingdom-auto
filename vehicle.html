@@ -222,6 +222,20 @@ async function renderVehicle(id){
 
   const extra = document.getElementById('extraDetails');
   extra.innerHTML = `<p><b>Mileage:</b> ${v.mileage}</p><p><b>Transmission:</b> ${v.transmission}</p><p><b>Fuel:</b> ${v.fuel}</p>`;
+  // Debug: show raw images array and resolved candidates in the page and console
+  try {
+    const dbg = document.createElement('pre');
+    dbg.className = 'img-debug';
+    dbg.style.fontSize = '12px';
+    dbg.style.color = '#666';
+    dbg.style.whiteSpace = 'pre-wrap';
+    dbg.textContent = 'Raw images: ' + JSON.stringify(v.images, null, 2);
+    extra.appendChild(dbg);
+    console.log('Vehicle images (raw):', v.images);
+    console.log('Vehicle images (resolved candidates):', v.images.map(src => {
+      try { return imageSrc(src); } catch (e) { return String(src); }
+    }));
+  } catch (e) { console.warn('Image debug render failed', e); }
 }
 
 document.addEventListener('DOMContentLoaded', function(){

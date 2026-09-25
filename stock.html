@@ -194,9 +194,10 @@
       const imageSrc = Array.isArray(item.images) && item.images.length ? resolveImageUrl(item.images[0]) : '';
       const detailUrl = `vehicle.html?id=${encodeURIComponent(item.id)}`;
       return `
-      <article class="vehicle-card">
+      <article class="vehicle-card" data-images="${Array.isArray(item.images) ? item.images.map(i=>String(i).replace(/"/g,'\'')).join('|') : ''}">
         <div class="vehicle-img"><span class="tag">${item.badge}</span><img class="vehicle-photo" src="${imageSrc}" alt="${item.title}" onerror="this.onerror=null;this.src='';" /></div>
         <div class="vehicle-info"><h3>${item.title}</h3><p>${item.year} • ${item.transmission} • ${item.fuel}</p><div class="price">${formatPrice(item.price)} <a class="view-details" href="${detailUrl}">View Details</a></div><div class="vehicle-meta-inline">Brand: ${item.make} • Model: ${item.model} • Range: ${formatPrice(item.price)} • Location: ${item.location || 'Local'}</div></div>
+        <div class="image-debug" style="display:none; font-size:12px; color:#666; padding:6px;">${Array.isArray(item.images) ? item.images.map(i=>String(i)).join('\n') : ''}</div>
       </article>
       `;
     }).join('');
