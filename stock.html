@@ -200,6 +200,35 @@
       </article>
       `;
     }).join('');
+
+    // After inserting cards, try alternative Supabase storage URLs for images that failed to load.
+    setTimeout(() => {
+      document.querySelectorAll('.vehicle-photo').forEach(img => {
+        if (!img) return;
+        // If already loaded, skip
+        if (img.naturalWidth > 0) return;
+        const orig = img.getAttribute('src') || '';
+        const candidates = [];
+        if (orig) candidates.push(orig);
+        try {
+          const base = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+          const clean = normalizeStoragePath(String(orig || ''));
+          if (clean) candidates.push(base + '/storage/v1/object/public/' + clean);
+        } catch (e) {}
+
+        let i = 0;
+        function tryNext() {
+          if (i >= candidates.length) { img.src = 'images/placeholder-car.svg'; return; }
+          const url = candidates[i++];
+          if (!url) return tryNext();
+          const p = new Image();
+          p.onload = function(){ img.src = url; };
+          p.onerror = function(){ tryNext(); };
+          p.src = url;
+        }
+        tryNext();
+      });
+    }, 60);
   }
 
   function onFilterChange() {

@@ -134,6 +134,25 @@ function normalizeStoragePath(value) {
   return clean ? `${baseUrl}/storage/v1/object/public/${clean}` : `${baseUrl}/storage/v1/object/public/`;
 }
 
+// Try a list of candidate URLs and set the first one that loads successfully on the provided <img> element.
+function loadFirstWorkingImage(candidates, imgEl, fallback) {
+  if (!Array.isArray(candidates) || !imgEl) return;
+  let i = 0;
+  function tryNext() {
+    if (i >= candidates.length) {
+      if (fallback) imgEl.src = fallback; else imgEl.src = imgEl.dataset.placeholder || '';
+      return;
+    }
+    const url = candidates[i++];
+    if (!url) return tryNext();
+    const probe = new Image();
+    probe.onload = function() { imgEl.src = url; };
+    probe.onerror = function() { tryNext(); };
+    probe.src = url;
+  }
+  tryNext();
+}
+
 async function renderVehicle(id){
   const api = window.KingdomSupabase;
   const vehicles = api && typeof api.loadVehicles === 'function' ? await api.loadVehicles() : [];
@@ -168,9 +187,17 @@ async function renderVehicle(id){
   v.images.forEach((src, idx)=>{
     const resolved = imageSrc(src);
     const img = document.createElement('img');
-    img.src = resolved;
     img.alt = `${v.title} photo ${idx + 1}`;
-    img.onerror = function(){ this.onerror = null; this.src = ''; };
+    img.dataset.orig = String(src || '');
+    img.dataset.placeholder = 'images/placeholder-car.svg';
+    // candidate list: resolved (likely correct), and a fallback built from raw storage path
+    const fallbackCandidates = [resolved];
+    try {
+      const base = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+      const clean = normalizeStoragePath(String(src || ''));
+      if (clean) fallbackCandidates.push(base + '/storage/v1/object/public/' + clean);
+    } catch (e) {}
+    loadFirstWorkingImage(fallbackCandidates, img, 'images/placeholder-car.svg');
 
     const t = document.createElement('div');
     t.className = 'thumb';
@@ -183,7 +210,12 @@ async function renderVehicle(id){
 
     if (idx === 0) {
       t.classList.add('active');
-      main.innerHTML = '<img src="' + resolved + '" alt="' + v.title + '" onerror="this.onerror=null;this.src=\'images/placeholder-car.svg\';" />';
+      main.innerHTML = '';
+      const mimg = document.createElement('img');
+      mimg.alt = v.title;
+      mimg.dataset.placeholder = 'images/placeholder-car.svg';
+      loadFirstWorkingImage([img.src], mimg, 'images/placeholder-car.svg');
+      main.appendChild(mimg);
     }
     thumbs.appendChild(t);
   });
