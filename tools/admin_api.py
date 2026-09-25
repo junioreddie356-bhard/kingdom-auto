@@ -439,20 +439,24 @@ def photo_record(vehicle_id, filename, content_type, size):
 
 def sync_vehicle_photos(vehicle_id, image_urls):
     """Update only images, leaving all existing vehicle details intact."""
+    # Ensure we store fully-qualified public URLs in the DB
+    safe_images = build_public_image_urls(image_urls)
     existing = call_supabase('GET', f"/vehicles?id=eq.{quote(vehicle_id, safe='')}&select=id")
+    payload = {
+        'images': safe_images,
+        'updated_at': __import__('datetime').datetime.utcnow().isoformat() + 'Z'
+    }
     if existing.get('ok') and existing.get('data'):
-        return call_supabase('PATCH', f"/vehicles?id=eq.{quote(vehicle_id, safe='')}", {
-            'images': image_urls,
-            'updated_at': __import__('datetime').datetime.utcnow().isoformat() + 'Z'
-        })
-    return sync_vehicle_to_supabase({
+        return call_supabase('PATCH', f"/vehicles?id=eq.{quote(vehicle_id, safe='')}", payload)
+    record = {
         'id': vehicle_id,
         'slug': vehicle_id,
         'title': vehicle_id.replace('-', ' ').title(),
         'price': 'Contact for pricing',
-        'images': image_urls,
+        'images': safe_images,
         'updated_at': __import__('datetime').datetime.utcnow().isoformat() + 'Z'
-    })
+    }
+    return sync_vehicle_to_supabase(record)
 
 @app.route('/api/admin/rotate', methods=['POST', 'OPTIONS'])
 def api_rotate_alias():
@@ -590,6 +594,12 @@ def upload():
                     pass
 
         new_urls = [photo['url'] for photo in photos]
+        # Ensure any newly produced URLs are normalized to full public URLs
+        try:
+            new_urls = build_public_image_urls(new_urls)
+        except Exception:
+            # fallback: keep original list
+            pass
         if mode == 'append':
             old_urls = [url for url in get_existing_vehicle_image_urls(vehicle_id) if url not in new_urls]
             new_urls = old_urls + new_urls
@@ -770,6 +780,13 @@ def create_vehicle():
         status,
         featured
     )
+
+    # Ensure the vehicle_record.images are full public URLs before syncing
+    try:
+        if 'images' in vehicle_record and vehicle_record['images']:
+            vehicle_record['images'] = build_public_image_urls(vehicle_record['images'])
+    except Exception:
+        pass
 
     import subprocess, sys
     repo_root = os.path.dirname(os.path.dirname(__file__))
