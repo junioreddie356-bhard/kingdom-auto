@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Vehicle Load</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+    pre { background: white; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    .section { margin: 20px 0; }
+    h2 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>Vehicle Load Test</h1>
+  <div class="section">
+    <h2>Supabase Config</h2>
+    <pre id="config"></pre>
+  </div>
+  <div class="section">
+    <h2>Vehicles from Supabase</h2>
+    <pre id="vehicles"></pre>
+  </div>
+  <div class="section">
+    <h2>Vehicle fzz949 Images</h2>
+    <pre id="images"></pre>
+  </div>
+  <div class="section">
+    <h2>Image Accessibility Check</h2>
+    <pre id="accessibility"></pre>
+  </div>
+
+  <script>
+    const config = {
+      url: 'https://spckgpxzcxvogjamfsqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+    };
+
+    document.getElementById('config').textContent = JSON.stringify(config, null, 2);
+
+    const client = window.supabase.createClient(config.url, config.anonKey);
+
+    async function testLoad() {
+      try {
+        console.log('[TEST] Querying vehicles...');
+        const { data, error } = await client.from('vehicles').select('*').order('created_at', { ascending: false });
+        
+        if (error) {
+          document.getElementById('vehicles').textContent = `ERROR: ${error.message}`;
+          return;
+        }
+
+        document.getElementById('vehicles').textContent = JSON.stringify(data, null, 2);
+
+        const fzz = data.find(v => v.id === 'fzz949');
+        if (fzz) {
+          document.getElementById('images').textContent = JSON.stringify(fzz.images, null, 2);
+
+          // Test image accessibility
+          const accessResults = [];
+          for (const img of fzz.images) {
+            try {
+              const response = await fetch(img, { method: 'HEAD', mode: 'cors' });
+              accessResults.push(`✓ ${img.substring(img.lastIndexOf('/') + 1)}: ${response.status} ${response.statusText}`);
+            } catch (e) {
+              accessResults.push(`✗ ${img.substring(img.lastIndexOf('/') + 1)}: ${e.message}`);
+            }
+          }
+          document.getElementById('accessibility').textContent = accessResults.join('\n');
+        } else {
+          document.getElementById('images').textContent = 'Vehicle fzz949 not found in response';
+        }
+      } catch (error) {
+        document.getElementById('vehicles').textContent = `EXCEPTION: ${error.message}`;
+      }
+    }
+
+    testLoad();
+  </script>
+</body>
+</html>
