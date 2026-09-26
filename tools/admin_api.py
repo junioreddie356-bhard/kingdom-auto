@@ -152,8 +152,10 @@ def get_public_storage_base_url():
     # Resolve and validate the storage bucket before returning the public base URL.
     cfg = get_supabase_settings()
     bucket = resolve_storage_bucket()
-    if bucket and str(bucket).lower() == 'public':
-        return cfg['url'].rstrip('/') + '/storage/v1/object/public'
+    # Supabase public object URL format: /storage/v1/object/public/{bucket}/{path}
+    # Always include the concrete bucket name in the public base URL.
+    if not bucket:
+        bucket = 'public'
     return cfg['url'].rstrip('/') + f'/storage/v1/object/public/{bucket}'
 
 
@@ -185,9 +187,9 @@ def build_public_image_urls(paths):
                 normalized = normalized.split('/storage/v1/object/public/', 1)[1]
             normalized = normalized.strip('/').replace('public/', '', 1) if normalized.strip('/').startswith('public/') else normalized.strip('/')
             if normalized.startswith('images/') or normalized.startswith('vehicles/'):
-                urls.append(base + '/' + quote(normalized, safe='/'))
+                urls.append(base + '/' + normalized)
             else:
-                urls.append(base + '/' + quote(normalized, safe='/'))
+                urls.append(base + '/' + normalized)
             continue
 
         if normalized.startswith('storage/v1/object/'):
@@ -204,10 +206,10 @@ def build_public_image_urls(paths):
             if normalized.startswith(('images/', '../images/', './images/')):
                 urls.append(normalized)
             else:
-                urls.append(base + '/' + quote(normalized, safe='/'))
+                urls.append(base + '/' + normalized)
             continue
 
-        urls.append(base + '/' + quote(normalized, safe='/'))
+        urls.append(base + '/' + normalized)
     return urls
 
 
@@ -308,8 +310,9 @@ def upload_file_to_supabase_storage(file_obj, storage_path, content_type='applic
     bucket = resolve_storage_bucket()
     if not cfg['url'] or not key:
         raise RuntimeError('Supabase not configured')
-
-    endpoint = cfg['url'].rstrip('/') + f'/storage/v1/object/{bucket}/{storage_path.lstrip("/")}'
+    # URL-encode the storage path to avoid unsafe characters (spaces, etc.)
+    safe_path = quote(storage_path.lstrip('/'), safe='/')
+    endpoint = cfg['url'].rstrip('/') + f'/storage/v1/object/{bucket}/{safe_path}'
     payload = file_obj.read() if hasattr(file_obj, 'read') else file_obj
     req = urllib_request.Request(endpoint, data=payload, headers={
         'apikey': key,

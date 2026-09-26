@@ -65,6 +65,7 @@ function normalizeVehicle(item) {
   const year = item.year || '2025';
   const price = item.price || 'Contact for pricing';
   const rawImages = Array.isArray(item.images) ? item.images : [];
+  console.log(`[DEBUG] normalizeVehicle(${item.id || 'unknown'}): raw images = ${rawImages.length} items`, rawImages);
   const images = rawImages.length
     ? rawImages.map(value => {
         if (!value) return '';
@@ -76,6 +77,7 @@ function normalizeVehicle(item) {
         return imageSrc(String(value));
       })
     : [''];
+  console.log(`[DEBUG] normalizeVehicle(${item.id || 'unknown'}): resolved images = ${images.length} items`, images);
 
   return {
     ...item,
@@ -155,9 +157,16 @@ function loadFirstWorkingImage(candidates, imgEl, fallback) {
 
 async function renderVehicle(id){
   const api = window.KingdomSupabase;
+  console.log('[DEBUG] KingdomSupabase API:', api);
   const vehicles = api && typeof api.loadVehicles === 'function' ? await api.loadVehicles() : [];
+  console.log('[DEBUG] Loaded vehicles:', vehicles);
   const requestedId = id || (vehicles[0] && (vehicles[0].id || vehicles[0].slug)) || '';
+  console.log('[DEBUG] Requested vehicle ID:', requestedId);
   const v = (vehicles || []).map(normalizeVehicle).find(vehicle => String(vehicle.id) === String(requestedId));
+  console.log('[DEBUG] Found vehicle:', v);
+  if (v && v.images) {
+    console.log('[DEBUG] Vehicle images (raw):', v.images);
+  }
 
   if(!v){
     document.getElementById('title').textContent = 'No vehicle available';

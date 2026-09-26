@@ -15,9 +15,18 @@ from datetime import datetime
 
 try:
     from tools import admin_api
-except Exception as e:
-    print('Could not import tools.admin_api:', e)
-    sys.exit(1)
+except Exception:
+    # Fallback: import admin_api by file path (works when running directly)
+    try:
+        import importlib.util, os
+        admin_path = os.path.join(os.path.dirname(__file__), 'admin_api.py')
+        spec = importlib.util.spec_from_file_location('tools.admin_api', admin_path)
+        admin_api = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(admin_api)
+        print('Imported admin_api via file path fallback')
+    except Exception as e:
+        print('Could not import tools.admin_api:', e)
+        sys.exit(1)
 
 
 def main(apply=False):
