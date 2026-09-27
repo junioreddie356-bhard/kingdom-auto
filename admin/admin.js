@@ -153,10 +153,47 @@
       .replace(/^vehicles\//i, 'vehicles/');
   }
 
+  function getCloudinaryConfig() {
+    const value = window.__KINGDOM_CLOUDINARY_CONFIG__ || {};
+    return {
+      cloudName: String(value.cloudName || value.cloud_name || 'z2geao1b').trim(),
+      folder: String(value.folder || value.path || '').trim().replace(/^\/+|\/+$/g, ''),
+      transform: String(value.transform || value.transforms || value.transformation || 'f_auto,q_auto').trim()
+    };
+  }
+
+  function toCloudinaryUrl(value) {
+    if (!value) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+    if (/^https?:\/\//i.test(text) && /res\.cloudinary\.com\//i.test(text)) return text;
+
+    const { cloudName, folder, transform } = getCloudinaryConfig();
+    if (!cloudName) return value;
+
+    const raw = text.split('?')[0].split('#')[0].replace(/^\/+/, '');
+    const base = `https://res.cloudinary.com/${cloudName}/image/upload`;
+    const clean = raw
+      .replace(/^storage\/v1\/object\/public\//i, '')
+      .replace(/^public\//i, '')
+      .replace(/^images\//i, '')
+      .replace(/^vehicles\//i, '')
+      .replace(/^\/+/, '')
+      .replace(/\/+$/g, '');
+
+    const transformPath = transform ? `${transform}/` : '';
+    const folderPath = folder ? `${folder}/` : '';
+    if (!clean) return `${base}/${transformPath}${folderPath}`.replace(/\/+$/, '');
+    return `${base}/${transformPath}${folderPath}${clean}`;
+  }
+
   function toPublicImageUrl(value) {
     if (!value || typeof value !== 'string') return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
+
+    const cloudUrl = toCloudinaryUrl(trimmed);
+    if (cloudUrl && cloudUrl !== trimmed) return cloudUrl;
 
     const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
 

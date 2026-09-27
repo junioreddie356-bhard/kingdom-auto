@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify
-import os, json, hashlib, binascii, shutil, re
+import os, json, hashlib, binascii, shutil, re, uuid
 from urllib import request as urllib_request
 from urllib import error as urllib_error
 from urllib.parse import quote
 from werkzeug.utils import secure_filename
 import tempfile, mimetypes
+try:
+    import cloudinary
+    import cloudinary.uploader
+    CLOUDINARY_AVAILABLE = True
+except Exception:
+    cloudinary = None
+    CLOUDINARY_AVAILABLE = False
 try:
     from PIL import Image
     PIL_AVAILABLE = True
@@ -143,6 +150,95 @@ def get_supabase_settings():
     }
 
 
+def get_cloudinary_config():
+    cloud_name = (os.environ.get('CLOUDINARY_CLOUD_NAME') or os.environ.get('CLOUD_NAME') or 'z2geao1b').strip()
+    folder = (os.environ.get('CLOUDINARY_FOLDER') or os.environ.get('CLOUDINARY_PATH') or os.environ.get('CLOUDINARY_UPLOAD_FOLDER') or '').strip().strip('/')
+    transform = (os.environ.get('CLOUDINARY_TRANSFORM') or os.environ.get('CLOUDINARY_TRANSFORMATION') or 'f_auto,q_auto').strip()
+    api_key = (os.environ.get('CLOUDINARY_API_KEY') or '').strip()
+    api_secret = (os.environ.get('CLOUDINARY_API_SECRET') or '').strip()
+    return {
+        'cloud_name': cloud_name,
+        'folder': folder,
+        'transform': transform,
+        'api_key': api_key,
+        'api_secret': api_secret,
+    }
+
+
+def cloudinary_enabled():
+    if not CLOUDINARY_AVAILABLE:
+        return False
+    cfg = get_cloudinary_config()
+    return bool(cfg.get('cloud_name') and cfg.get('api_key') and cfg.get('api_secret'))
+
+
+def upload_to_cloudinary(file_obj, vehicle_id, filename, folder=None, overwrite=True):
+    if not file_obj or not cloudinary_enabled():
+        return ''
+
+    cfg = get_cloudinary_config()
+    safe_name = secure_filename(filename)
+    stem, _ = os.path.splitext(safe_name)
+    public_id = f"{vehicle_id}_{uuid.uuid4().hex}_{stem or 'image'}"
+    target_folder = (folder or cfg.get('folder') or 'vehicles').strip('/').strip()
+    if not target_folder:
+        target_folder = 'vehicles'
+
+    cloudinary.config(
+        cloud_name=cfg.get('cloud_name'),
+        api_key=cfg.get('api_key'),
+        api_secret=cfg.get('api_secret')
+    )
+
+    result = cloudinary.uploader.upload(
+        file_obj,
+        folder=target_folder,
+        public_id=public_id,
+        resource_type='image',
+        overwrite=overwrite,
+    )
+    return str(result.get('secure_url') or result.get('url') or '').strip()
+
+
+def to_cloudinary_public_url(value):
+    if not value or not isinstance(value, str):
+        return ''
+    text = value.strip()
+    if not text:
+        return ''
+    if 'res.cloudinary.com/' in text:
+        return text
+    cfg = get_cloudinary_config()
+    cloud_name = cfg.get('cloud_name')
+    if not cloud_name:
+        return value
+
+    raw = text.split('?', 1)[0].split('#', 1)[0].strip()
+    if raw.startswith('http://') or raw.startswith('https://'):
+        if 'res.cloudinary.com/' in raw:
+            return raw
+        if '/storage/v1/object/public/' in raw:
+            raw = raw.split('/storage/v1/object/public/', 1)[1]
+        raw = raw.lstrip('/')
+    else:
+        raw = raw.lstrip('/')
+
+    raw = raw.replace('public/', '', 1) if raw.startswith('public/') else raw
+    raw = raw.replace('images/', '', 1) if raw.startswith('images/') else raw
+    raw = raw.replace('vehicles/', '', 1) if raw.startswith('vehicles/') else raw
+
+    folder = cfg.get('folder', '').strip('/').strip()
+    transform = cfg.get('transform', '').strip()
+    emitted = f"https://res.cloudinary.com/{cloud_name}/image/upload"
+    if transform:
+        emitted = f"{emitted}/{quote(transform, safe='/')}"
+    if folder:
+        emitted = f"{emitted}/{quote(folder + '/' + raw, safe='/')}" if raw else f"{emitted}/{quote(folder, safe='/')}"
+    elif raw:
+        emitted = f"{emitted}/{quote(raw, safe='/')}"
+    return emitted
+
+
 def supabase_enabled():
     cfg = get_supabase_settings()
     return bool(cfg['url'] and (cfg['service_key'] or cfg['anon_key']))
@@ -175,6 +271,12 @@ def sanitize_storage_filename(name: str) -> str:
 def build_public_image_urls(paths):
     if not paths:
         return []
+
+    cloud_cfg = get_cloudinary_config()
+    cloud_name = cloud_cfg.get('cloud_name')
+    if cloud_name:
+        return [to_cloudinary_public_url(path) for path in paths if path]
+
     base = get_public_storage_base_url()
     urls = []
     for path in paths:
@@ -597,15 +699,34 @@ def upload():
                     pass
 
         new_urls = [photo['url'] for photo in photos]
-        # Ensure any newly produced URLs are normalized to full public URLs
-        try:
-            new_urls = build_public_image_urls(new_urls)
-        except Exception:
-            # fallback: keep original list
-            pass
+        cloudinary_urls = []
+        if cloudinary_enabled():
+            try:
+                for photo in photos:
+                    staged_path = os.path.join(staging_dir, photo['filename'])
+                    with open(staged_path, 'rb') as image_file:
+                        uploaded_url = upload_to_cloudinary(image_file, vehicle_id, photo['filename'], folder=f"vehicles/{vehicle_id}")
+                        if uploaded_url:
+                            cloudinary_urls.append(uploaded_url)
+            except Exception:
+                cloudinary_urls = []
+
+        if cloudinary_urls:
+            new_urls = cloudinary_urls
+        else:
+            # Ensure any newly produced URLs are normalized to full public URLs
+            try:
+                new_urls = build_public_image_urls(new_urls)
+            except Exception:
+                # fallback: keep original list
+                pass
+
         if mode == 'append':
             old_urls = [url for url in get_existing_vehicle_image_urls(vehicle_id) if url not in new_urls]
-            new_urls = old_urls + new_urls
+            if cloudinary_urls:
+                new_urls = old_urls + cloudinary_urls
+            else:
+                new_urls = old_urls + new_urls
         sync = sync_vehicle_photos(vehicle_id, new_urls)
         if not sync.get('ok', True):
             if backup_dir and os.path.isdir(backup_dir):
