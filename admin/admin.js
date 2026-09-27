@@ -195,7 +195,7 @@
     const cloudUrl = toCloudinaryUrl(trimmed);
     if (cloudUrl && cloudUrl !== trimmed) return cloudUrl;
 
-    const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+    const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://invsxcmcczwckmfkynzk.supabase.co').replace(/\/$/, '');
 
     if (/^(https?:)?\/\//i.test(trimmed) || trimmed.startsWith('data:')) {
       const url = trimmed.split('?')[0].split('#')[0];

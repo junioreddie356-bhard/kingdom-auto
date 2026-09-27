@@ -28,13 +28,13 @@ def remove_from_file(path, target_link):
     return True
 
 
-DEFAULT_SUPABASE_URL = 'https://spckgpxzcxvogjamfsqr.supabase.co'
-DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+DEFAULT_SUPABASE_URL = 'https://invsxcmcczwckmfkynzk.supabase.co'
+DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImludnN4Y21jY3p3Y2ttZmt5bnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0NzE0NTEsImV4cCI6MjEwNjA0NzQ1MX0._zv75lSG6VIkk_Fxoh_aH25NRHO1DvXyqBJwaT_2-YM'
 
 
 def delete_supabase_vehicle(vehicle_id):
     url = os.environ.get('SUPABASE_URL') or os.environ.get('SUPABASE_PROJECT_URL') or DEFAULT_SUPABASE_URL
-    key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_ANON_KEY') or os.environ.get('SUPABASE_PUBLIC_KEY') or DEFAULT_SUPABASE_ANON_KEY
+    key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_ANON_KEY') or os.environ.get('SUPABASE_PUBLIC_KEY') or 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImludnN4Y21jY3p3Y2ttZmt5bnprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDQ3MTQ1MSwiZXhwIjoyMTA2MDQ3NDUxfQ.F74Q3jOr4SWAG00Y9PbI1wS248ZatVEaiRWWtKfiZtI'
 
     delete_url = f"{url.rstrip('/')}/rest/v1/vehicles?id=eq.{quote(vehicle_id)}"
     req = urllib.request.Request(

@@ -67,7 +67,7 @@
 </main>
 
 <footer><div class="container footer"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">Kingdom <b>AutoMobile</b><small>DEALERSHIP</small></span></div><p>© 2026 Kingdom AutoMobile Dealership. All rights reserved.</p></div></footer>
-<script>window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || { url: 'https://spckgpxzcxvogjamfsqr.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw' };</script>
+<script>window.__KINGDOM_SUPABASE_CONFIG__ = window.__KINGDOM_SUPABASE_CONFIG__ || { url: 'https://invsxcmcczwckmfkynzk.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImludnN4Y21jY3p3Y2ttZmt5bnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0NzE0NTEsImV4cCI6MjEwNjA0NzQ1MX0._zv75lSG6VIkk_Fxoh_aH25NRHO1DvXyqBJwaT_2-YM' };</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="formatters.js"></script>
@@ -141,7 +141,7 @@
     const cloudUrl = toCloudinaryUrl(text);
     if (cloudUrl && cloudUrl !== text) return cloudUrl;
 
-    const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+    const baseUrl = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://invsxcmcczwckmfkynzk.supabase.co').replace(/\/$/, '');
 
     if (/^(https?:)?\/\//i.test(text) || text.startsWith('data:')) {
       const url = text.split('?')[0].split('#')[0];
@@ -249,7 +249,7 @@
         const candidates = [];
         if (orig) candidates.push(orig);
         try {
-          const base = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://spckgpxzcxvogjamfsqr.supabase.co').replace(/\/$/, '');
+          const base = (window.__KINGDOM_SUPABASE_CONFIG__?.url || 'https://invsxcmcczwckmfkynzk.supabase.co').replace(/\/$/, '');
           const clean = normalizeStoragePath(String(orig || ''));
           if (clean) candidates.push(base + '/storage/v1/object/public/' + clean);
         } catch (e) {}

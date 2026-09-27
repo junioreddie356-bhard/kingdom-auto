@@ -25,8 +25,16 @@ CREDS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'admin', '
 IMAGES_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'images')
 
 ALLOWED_EXT = {
-    'png','jpg','jpeg','gif','webp','svg','bmp','avif','jfif','heic','heif','tif','tiff','ico'
+    'png','jpg','jpeg','jpe','gif','webp','svg','bmp','avif','jfif','heic','heif','tif','tiff','ico',
+    'raw','arw','nef','cr2','dng','orf','sr2','hevc','mov','mp4'
 }
+
+
+def is_image_mimetype(file_storage):
+    if not file_storage:
+        return False
+    mimetype = (getattr(file_storage, 'mimetype', '') or '').lower()
+    return bool(mimetype) and mimetype.startswith('image/')
 
 
 def get_request_files():
@@ -138,14 +146,14 @@ def write_creds(username, password, iterations=100000):
     return data
 
 
-DEFAULT_SUPABASE_URL = 'https://spckgpxzcxvogjamfsqr.supabase.co'
-DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwY2tncHh6Y3h2b2dqYW1mc3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDg2NjQsImV4cCI6MjEwNDEyNDY2NH0.h52gkl9ms2vT785SUTmAT_IDzNfaa2jUpepEGIW0yZw'
+DEFAULT_SUPABASE_URL = 'https://invsxcmcczwckmfkynzk.supabase.co'
+DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImludnN4Y21jY3p3Y2ttZmt5bnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0NzE0NTEsImV4cCI6MjEwNjA0NzQ1MX0._zv75lSG6VIkk_Fxoh_aH25NRHO1DvXyqBJwaT_2-YM'
 
 
 def get_supabase_settings():
     return {
         'url': (os.environ.get('SUPABASE_URL') or os.environ.get('SUPABASE_PROJECT_URL') or DEFAULT_SUPABASE_URL).strip().rstrip('/'),
-        'service_key': (os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_KEY') or DEFAULT_SUPABASE_ANON_KEY).strip(),
+        'service_key': (os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_KEY') or 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImludnN4Y21jY3p3Y2ttZmt5bnprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDQ3MTQ1MSwiZXhwIjoyMTA2MDQ3NDUxfQ.F74Q3jOr4SWAG00Y9PbI1wS248ZatVEaiRWWtKfiZtI').strip(),
         'anon_key': (os.environ.get('SUPABASE_ANON_KEY') or os.environ.get('SUPABASE_PUBLIC_KEY') or DEFAULT_SUPABASE_ANON_KEY).strip()
     }
 
@@ -641,7 +649,7 @@ def upload():
     files = get_request_files()
     if not files:
         return jsonify({'error': 'Select at least one image to upload.'}), 400
-    invalid = [f.filename for f in files if not allowed_filename(f.filename)]
+    invalid = [f.filename for f in files if not is_allowed_upload(f)]
     if invalid:
         return jsonify({'error': 'Only supported image files can be uploaded.', 'invalidFiles': invalid}), 400
 
