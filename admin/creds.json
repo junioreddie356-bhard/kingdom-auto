@@ -1,6 +1,6 @@
 {
-  "username": "admin",
-  "salt": "98e931fcf0adf651ec86624a91bc2603",
-  "hash": "566b848bc4817de3c2a94960a9589276b005f3fad56b706acf616f668ffaeff5",
+  "username": "Kingdom_AutoMobile",
+  "salt": "d5a1c2e3f4a56789b0c1d2e3f4a56789",
+  "hash": "24c09144858400d56db7ac8eb8adf047de9f22f09d3b674d461800a3214e3b3d",
   "iterations": 100000
 }
