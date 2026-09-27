@@ -13,7 +13,20 @@
     { "source": "/api/admin/:path*", "destination": "/api/admin" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
-    { "source": "/admin/:path*", "destination": "/admin/:path*" }
+    { "source": "/admin/login", "destination": "/admin/login.html" },
+    { "source": "/admin/login/", "destination": "/admin/login.html" },
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/admin/dashboard/", "destination": "/admin/dashboard.html" },
+    { "source": "/admin/vehicles", "destination": "/admin/vehicles.html" },
+    { "source": "/admin/vehicles/", "destination": "/admin/vehicles.html" },
+    { "source": "/admin/media", "destination": "/admin/media.html" },
+    { "source": "/admin/media/", "destination": "/admin/media.html" },
+    { "source": "/admin/inquiries", "destination": "/admin/inquiries.html" },
+    { "source": "/admin/inquiries/", "destination": "/admin/inquiries.html" },
+    { "source": "/admin/settings", "destination": "/admin/settings.html" },
+    { "source": "/admin/settings/", "destination": "/admin/settings.html" },
+    { "source": "/admin/stock", "destination": "/admin/stock.html" },
+    { "source": "/admin/stock/", "destination": "/admin/stock.html" }
   ],
   "headers": [
     {
